@@ -1,7 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import protectRoute from "../middleware/auth.middleware.js";
 
 
 const router = express.Router();
@@ -17,10 +16,10 @@ router.post("/register", async (req, res) => {
          return res.status(400).json({ message: "All fields are required" });
       }
 
-      if (password.lentgh < 6) {
+      if (password.length < 6) {
          return res.status(400).json({ message: "Password should be at least 6 character long" })
       }
-      if (username.lentgh < 3) {
+      if (username.length < 3) {
          return res.status(400).json({ message: "Username should be at least 4 character long" })
       }
 
@@ -65,9 +64,7 @@ router.post("/register", async (req, res) => {
    }
    catch (error) {
       console.log("Error in registration route", error);
-      res.status(500).json({
-         message: "Internal server error"
-      })
+      res.status(500).json({ message: "Internal server error" })
    }
 });
 router.post("/login", async (req, res) => {
