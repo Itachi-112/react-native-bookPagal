@@ -11,8 +11,8 @@ const router = express.Router();
 router.post("/",protectRoute, async (req,res)=>{
     try{
 
-        const {title,description,image,rating} = req.body;
-        if(!image||!title||!description||!rating) return res.status(400).json({message:"Please provide all the fields"});
+        const {title,caption,image,rating} = req.body;
+        if(!image||!title||!caption||!rating) return res.status(400).json({message:"Please provide all the fields"});
 
         //upload image to cloudinary 
         const uploadResponse  = await cloudinary.uploader.upload(image);
