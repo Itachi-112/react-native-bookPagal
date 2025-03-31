@@ -38,51 +38,26 @@ router.post("/",protectRoute, async (req,res)=>{
     }
 });
 
-router.get("/",protectRoute, async (req,res)=>{
-    
-    try{
+// get books by user
+router.get("/user", protectRoute, async (req, res) => {
+    try {
+        // Optional but good practice: Check if user info is available
+        if (!req.user || !req.user._id) {
+            console.error("User info missing in /user route after protectRoute");
+            return res.status(401).json({ message: "User context not found" });
+        }
 
-        // pagination
-const page = req.query.page || 1;
-const limit = req.query.limit || 5;
-const skip = (page - 1) * limit;
+        const books = await Book.find({ user: req.user._id }).sort({ createdAt: -1 });
+        res.json(books); // Send books if found successfully
 
-
-        const books = await Book.find()
-        .sort({createdAt:-1})  //sort by creation date in descending order
-        .skip(skip)
-        .limit(limit)
-        .populate("user","username profileImage") ; 
-
-        res.send(
-            {
-                books,
-                currentPage: page,
-                totalBooks: books.length,
-                totalPages: Math.ceil(books.length / limit)
-            }
-        );
+    } catch (error) { // --->>> FIX: Catch block now handles the error <<<---
+        // Log the error message (or the full error object for more detail)
+        console.error(`Error getting books for user ${req.user?._id}:`, error.message); // Now 'error' exists here
+        // Send a 500 status and error message back to the client
+        res.status(500).json({ message: "Server error fetching user books" });
     }
-
-    catch(error){
-        console.log("Error getting books",error);
-        res.status(500).json({message:"Internal server error"})
-    }
-
+    // --->>> REMOVE the lines that were outside the try...catch <<<---
 });
-
-// get books by user 
-router.get("/user",protectRoute, async (req,res)=>{
-    
-try{
-const books = await Book.find({user: req.user._id}).sort({createdAt:-1});
-res.json(books);
-}
-catch(error){}
-console.error("Error getting books",error.message);
-res.status(500).json({message:"Server error"})
-})
-
 // delete a book
 router.delete("/:id", protectRoute, async (req, res) => {
    
