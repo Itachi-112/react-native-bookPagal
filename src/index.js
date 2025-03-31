@@ -14,10 +14,8 @@ job.start();
 app.use(express.json());
 app.use(cors());
 
-app.post("/api/auth/login", (req, res) => {
-    res.json({ message: "Login successful" });
-  });
   
+
 app.use("/api/auth",authRoutes);
 app.use("/api/books",bookRoutes);
 
